@@ -5,51 +5,29 @@ Predator/Prey Swarm
 </title>
 <script type="text/javascript">
 canvasWidth = canvasHeight = 500;
-numPrey = 1;
+numPrey = 2;
 numPred = 0;
 prey = new Array();
 pred = new Array();
+interactRange = 10;
 
 function updatePrey()
 {
-	// Avoid walls
-//	for (i = 0; i < numPrey; i++)
-//	{
-//		var xRel = (prey[i].x > 250) ? prey[i].x - (canvasWidth - 1) : prey[i].x;
-//		var yRel = (prey[i].y > 250) ? prey[i].y - (canvasWidth - 1) : prey[i].y;
-//
-//		// Check for divide by zero here
-//		prey[i].dx = 1/xRel;
-//		//prey[i].dx /= yRel;
-//		prey[i].dy = 1/yRel;
-//		//prey[i].dy /= yRel;
-//	}
+	// Currently this is naively implemented (or at least it will be)
+	// Change later!
 
-	// Avoid Predators
-//	for (i = 0; i < numPrey; i++)
-//	{
-//		for (j = 0; j < numPred; j++)
-//		{
-//			var dist = Math.sqrt(Math.pow(prey[i].x - pred[j].x, 2) + Math.pow(prey[i].y - prey[j].y, 2));
-//			prey[i].dx += .0001 * (((prey[i].x - pred[j].x) / dist) / numPred);
-//			prey[i].dy += .0001 * (((prey[i].y - pred[j].y) / dist) / numPred);
-//		}
-//	}
-
-	// Avoid other prey
+	// Flock together
 	for (i = 0; i < numPrey; i++)
 	{
-		for (j = 0; j < numPrey; j++)
+		for (j = 0; j < numPrey; i++)
 		{
-			if (prey[i].x != prey[j].x || prey[i].y != prey[j].y)
-			{
-				//prey[i].dx += (1 / Math.pow((prey[i].x - prey[j].x), 2));
-				//prey[i].dy += (1 / Math.pow((prey[i].y - prey[j].y), 2));
-				prey[i].dx += (1 / (prey[i].x - prey[j].x) / numPrey);
-				prey[i].dy += (1 / (prey[i].y - prey[j].y) / numPrey);
-			}
+
 		}
 	}
+
+	// Relative velocity
+
+	// Keep distance
 
 	// Need to have a max speed cap
 
@@ -70,25 +48,13 @@ function updatePrey()
 	// Update Prey positions
 	for (i = 0; i < numPrey; i++)
 	{
-		prey[i].x += prey[i].dx * prey[i].speed; 
-		prey[i].y += prey[i].dy * prey[i].speed; 
-		//prey[i].x += prey[i].dx; 
-		//prey[i].y += prey[i].dy;
+		prey[i].x += prey[i].dx;
+		prey[i].y += prey[i].dy;
 	} 
 }
 
 function updatePred()
 {
-//	for (i = 0; i < numPred; i++)
-//	{
-//		pred[i].dx = Math.random();
-//		prey[i].dy = Math.random();
-//		var xDir = (Math.floor(Math.random() * 2) == 0) ? -1 : 1;
-//		var yDir = (Math.floor(Math.random() * 2) == 0) ? -1 : 1;
-//		pred[i].x += pred[i].dx;
-//		pred[i].y += pred[i].dy;
-//	}
-
 }
 
 function draw()
@@ -122,11 +88,8 @@ function init()
 		prey[i] = {};
 		prey[i].x = Math.floor(Math.random() * canvasWidth) + 0.5;
 		prey[i].y = Math.floor(Math.random() * canvasWidth) + 0.5;
-		prey[i].dx = Math.floor(Math.random() * 4);
-		prey[i].dy = Math.floor(Math.random() * 4);
 		prey[i].dx = Math.random();
 		prey[i].dy = Math.random();
-		prey[i].speed = 5;
 	}
 
 	for (i = 0; i < numPred; i++)
@@ -134,11 +97,8 @@ function init()
 		pred[i] = {};
 		pred[i].x = Math.floor(Math.random() * canvasWidth) + 0.5;
 		pred[i].y = Math.floor(Math.random() * canvasWidth) + 0.5;
-		pred[i].dx = Math.floor(Math.random() * 4);
-		pred[i].dy = Math.floor(Math.random() * 4);
 		pred[i].dx = 0;
 		pred[i].dy = 0;
-		pred[i].speed = .01;
 	}
 	
 	setInterval(draw, 1);
