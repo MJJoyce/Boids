@@ -5,25 +5,39 @@ Predator/Prey Swarm
 </title>
 <script type="text/javascript">
 canvasWidth = canvasHeight = 500;
-numPrey = 2;
+numPrey = 300;
 numPred = 0;
 prey = new Array();
 pred = new Array();
 interactRange = 10;
+flockTogetherScalar = .7;
 
 function updatePrey()
 {
 	// Currently this is naively implemented (or at least it will be)
-	// Change later!
+	// Change later! Currently concern is getting this working.
 
 	// Flock together
+	/*
 	for (i = 0; i < numPrey; i++)
 	{
-		for (j = 0; j < numPrey; i++)
+		var xAdj = 0;
+		var yAdj = 0;
+		for (j = 0; j < numPrey; j++)
 		{
+			if (prey[i].x == prey[j].x || prey[i].y == prey[j].y) 
+			{
+				continue;
+			}
 
+			xAdj += prey[j].x/numPrey;
+			yAdj += prey[j].y/numPrey;
 		}
+
+		prey[i].dx = ((xAdj - prey[i].x) * flockTogetherScalar) + (prey[i].dx * (1 - flockTogetherScalar));
+		prey[i].dy = ((yAdj - prey[i].y) * flockTogetherScalar) + (prey[i].dy * (1 - flockTogetherScalar));
 	}
+	//*/
 
 	// Relative velocity
 
@@ -60,7 +74,7 @@ function updatePred()
 function draw()
 {
 	updatePrey();
-	updatePred();
+	//updatePred();
 
 	var drawContext = document.getElementById('canvas').getContext('2d');
 	drawContext.fillStyle = "rgb(0, 0, 0)";
