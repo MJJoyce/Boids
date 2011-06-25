@@ -1,0 +1,152 @@
+<html>
+<head>
+<title>
+Predator/Prey Swarm
+</title>
+<script type="text/javascript">
+canvasWidth = canvasHeight = 500;
+numPrey = 1;
+numPred = 0;
+prey = new Array();
+pred = new Array();
+
+function updatePrey()
+{
+	// Avoid walls
+//	for (i = 0; i < numPrey; i++)
+//	{
+//		var xRel = (prey[i].x > 250) ? prey[i].x - (canvasWidth - 1) : prey[i].x;
+//		var yRel = (prey[i].y > 250) ? prey[i].y - (canvasWidth - 1) : prey[i].y;
+//
+//		// Check for divide by zero here
+//		prey[i].dx = 1/xRel;
+//		//prey[i].dx /= yRel;
+//		prey[i].dy = 1/yRel;
+//		//prey[i].dy /= yRel;
+//	}
+
+	// Avoid Predators
+//	for (i = 0; i < numPrey; i++)
+//	{
+//		for (j = 0; j < numPred; j++)
+//		{
+//			var dist = Math.sqrt(Math.pow(prey[i].x - pred[j].x, 2) + Math.pow(prey[i].y - prey[j].y, 2));
+//			prey[i].dx += .0001 * (((prey[i].x - pred[j].x) / dist) / numPred);
+//			prey[i].dy += .0001 * (((prey[i].y - pred[j].y) / dist) / numPred);
+//		}
+//	}
+
+	// Avoid other prey
+	for (i = 0; i < numPrey; i++)
+	{
+		for (j = 0; j < numPrey; j++)
+		{
+			if (prey[i].x != prey[j].x || prey[i].y != prey[j].y)
+			{
+				//prey[i].dx += (1 / Math.pow((prey[i].x - prey[j].x), 2));
+				//prey[i].dy += (1 / Math.pow((prey[i].y - prey[j].y), 2));
+				prey[i].dx += (1 / (prey[i].x - prey[j].x) / numPrey);
+				prey[i].dy += (1 / (prey[i].y - prey[j].y) / numPrey);
+			}
+		}
+	}
+
+	// Need to have a max speed cap
+
+	// Wrap around to other side of screen
+	for (i = 0; i < numPrey; i++)
+	{
+		if (prey[i].x < 0 || prey[i].x > canvasWidth - 1)
+		{
+			prey[i].x = (prey[i].x > canvasWidth - 1) ? prey[i].x - canvasWidth : prey[i].x + canvasWidth;
+		}
+
+		if (prey[i].y < 0 || prey[i].y > 499)
+		{
+			prey[i].y = (prey[i].y > canvasWidth - 1) ? prey[i].y - canvasWidth : prey[i].y + canvasWidth;
+		}
+	}
+
+	// Update Prey positions
+	for (i = 0; i < numPrey; i++)
+	{
+		prey[i].x += prey[i].dx * prey[i].speed; 
+		prey[i].y += prey[i].dy * prey[i].speed; 
+		//prey[i].x += prey[i].dx; 
+		//prey[i].y += prey[i].dy;
+	} 
+}
+
+function updatePred()
+{
+//	for (i = 0; i < numPred; i++)
+//	{
+//		pred[i].dx = Math.random();
+//		prey[i].dy = Math.random();
+//		var xDir = (Math.floor(Math.random() * 2) == 0) ? -1 : 1;
+//		var yDir = (Math.floor(Math.random() * 2) == 0) ? -1 : 1;
+//		pred[i].x += pred[i].dx;
+//		pred[i].y += pred[i].dy;
+//	}
+
+}
+
+function draw()
+{
+	updatePrey();
+	updatePred();
+
+	var drawContext = document.getElementById('canvas').getContext('2d');
+	drawContext.fillStyle = "rgb(0, 0, 0)";
+	drawContext.fillRect(0, 0, canvasWidth, canvasHeight);
+
+	// Draw Prey
+	drawContext.fillStyle = "rgb(0, 255, 0)";
+	for (i = 0; i < numPrey; i++)
+	{
+		drawContext.fillRect(prey[i].x, prey[i].y, 5, 5);
+	}
+
+	// Draw Predators
+	drawContext.fillStyle = "rgb(255, 0, 0)";
+	for (i= 0; i < numPred; i++)
+	{
+		drawContext.fillRect(pred[i].x, pred[i].y, 5, 5);
+	}
+}
+
+function init() 
+{
+	for (i = 0; i < numPrey; i++)
+	{
+		prey[i] = {};
+		prey[i].x = Math.floor(Math.random() * canvasWidth) + 0.5;
+		prey[i].y = Math.floor(Math.random() * canvasWidth) + 0.5;
+		prey[i].dx = Math.floor(Math.random() * 4);
+		prey[i].dy = Math.floor(Math.random() * 4);
+		prey[i].dx = Math.random();
+		prey[i].dy = Math.random();
+		prey[i].speed = 5;
+	}
+
+	for (i = 0; i < numPred; i++)
+	{
+		pred[i] = {};
+		pred[i].x = Math.floor(Math.random() * canvasWidth) + 0.5;
+		pred[i].y = Math.floor(Math.random() * canvasWidth) + 0.5;
+		pred[i].dx = Math.floor(Math.random() * 4);
+		pred[i].dy = Math.floor(Math.random() * 4);
+		pred[i].dx = 0;
+		pred[i].dy = 0;
+		pred[i].speed = .01;
+	}
+	
+	setInterval(draw, 1);
+}
+
+</script>
+</head>
+<body onload="init()">
+<canvas id="canvas" width="500" height="500"></canvas>
+</body>
+</html>
