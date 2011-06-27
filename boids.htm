@@ -5,12 +5,15 @@ Predator/Prey Swarm
 </title>
 <script type="text/javascript">
 canvasWidth = canvasHeight = 500;
-numPrey = 300;
+numPrey = 10;
 numPred = 0;
 prey = new Array();
 pred = new Array();
-interactRange = 10;
-flockTogetherScalar = .7;
+interactDist = 30;
+flockTogetherScalar = 5;
+relativeVelScalar = .7;
+spacingScalar = .3;
+maxSpeed = .9;
 
 function updatePrey()
 {
@@ -25,13 +28,13 @@ function updatePrey()
 		var yAdj = 0;
 		for (j = 0; j < numPrey; j++)
 		{
-			if (prey[i].x == prey[j].x || prey[i].y == prey[j].y) 
-			{
-				continue;
-			}
+			//if (prey[i].x == prey[j].x || prey[i].y == prey[j].y) 
+			//{
+			//	continue;
+			//}
 
-			xAdj += prey[j].x/numPrey;
-			yAdj += prey[j].y/numPrey;
+			xAdj += prey[j].x / numPrey;
+			yAdj += prey[j].y / numPrey;
 		}
 
 		prey[i].dx = ((xAdj - prey[i].x) * flockTogetherScalar) + (prey[i].dx * (1 - flockTogetherScalar));
@@ -40,10 +43,79 @@ function updatePrey()
 	//*/
 
 	// Relative velocity
+	/*
+	for (i = 0; i < numPrey; i++)
+	{
+		var xAdj = 0;
+		var yAdj = 0;
+		for (j = 0; j < numPrey; j++)
+		{
+			xAdj += prey[j].dx / numPrey;
+			yAdj += prey[j].dy / numPrey;
+		}
+
+		prey[i].dx = (xAdj * relativeVelScalar) + (prey[i].dx * (1 - relativeVelScalar));
+		prey[i].dy = (yAdj * relativeVelScalar) + (prey[i].dy * (1 - relativeVelScalar));
+	}
+	//*/
 
 	// Keep distance
+	/*
+	for (i = 0; i < numPrey; i++)
+	{
+		var xAdj = 0.0;
+		var yAdj = 0.0;
+		for (j = 0; j < numPrey; j++)
+		{
+		    if (prey[i].x == prey[j].x && prey[i].y == prey[j].y) continue;
+			//if (i == j)
+				//continue;
 
-	// Need to have a max speed cap
+			var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) + 
+					Math.pow(prey[i].y - prey[j].y, 2))
+
+			if (dist > interactDist)
+				continue;
+
+			//dist = (dist == 0) ? 1 : dist;
+
+			xAdj -= prey[j].dx / (dist);// * numPrey);
+			yAdj -= prey[j].dy / (dist);// * numPrey);
+		}
+		//prey[i].dx += (xAdj * spacingScalar) + (prey[i].dx * (1 - spacingScalar));
+		//prey[i].dy += (yAdj * spacingScalar) + (prey[i].dy * (1 - spacingScalar));
+		prey[i].dx += xAdj;
+		prey[i].dy += yAdj;
+	}
+	//*/
+	//*
+	for (i = 0; i < numPrey; i++)
+	{
+		var xAdj = 0.0;
+		var yAdj = 0.0;
+		for (j = 0; j < numPrey; j++)
+		{
+			if (i == j)
+				continue;
+
+			var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
+						Math.pow(prey[i].y - prey[j].y, 2));
+			//if (Math.abs(prey[i].x - prey[j].x) < interactDist &&
+			//		Math.abs(prey[i].y - prey[j].y) < interactDist)
+			if (dist < interactDist)
+			{
+				//var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
+						//Math.pow(prey[i].y - prey[j].y, 2));
+				xAdj += (prey[i].x - prey[j].x) / (dist * numPrey);
+				yAdj += (prey[i].y - prey[j].y) / (dist * numPrey);
+			}
+		}
+		prey[i].dx += xAdj * .3;
+		prey[i].dy += yAdj * .3;
+	}
+	//*/
+
+
 
 	// Wrap around to other side of screen
 	for (i = 0; i < numPrey; i++)
@@ -62,6 +134,21 @@ function updatePrey()
 	// Update Prey positions
 	for (i = 0; i < numPrey; i++)
 	{
+		if (prey[i].dx > maxSpeed || prey[i].dx < -maxSpeed)
+		{
+			var sign = 0;
+			sign = (prey[i].dx == 0) ? 0 : ((prey[i].dx < 0) ? -1 : 1);
+			prey[i].dx = sign * maxSpeed;
+		}
+
+		if (prey[i].dy > maxSpeed || prey[i].dy < -maxSpeed)
+		{
+			var sign = 0;
+			sign = (prey[i].dy == 0) ? 0 : ((prey[i].dy < 0) ? -1 : 1);
+			prey[i].dy = sign * maxSpeed;
+		}
+		//prey[i].x += (prey[i].dx > maxSpeed) ? maxSpeed : prey[i].dx;
+		//prey[i].y += (prey[i].dy > maxSpeed) ? maxSpeed : prey[i].dy;
 		prey[i].x += prey[i].dx;
 		prey[i].y += prey[i].dy;
 	} 
@@ -102,8 +189,12 @@ function init()
 		prey[i] = {};
 		prey[i].x = Math.floor(Math.random() * canvasWidth) + 0.5;
 		prey[i].y = Math.floor(Math.random() * canvasWidth) + 0.5;
-		prey[i].dx = Math.random();
-		prey[i].dy = Math.random();
+		var xDir = Math.floor(Math.random() + .5);
+		var yDir = Math.floor(Math.random() + .5);
+		xDir = (xDir == 1) ? 1 : -1;
+		yDir = (yDir == 1) ? 1 : -1;
+		prey[i].dx = xDir * Math.random();
+		prey[i].dy = yDir * Math.random();
 	}
 
 	for (i = 0; i < numPred; i++)
