@@ -23,7 +23,6 @@ function updatePrey()
 	// Change later! Currently concern is getting this working.
 
 	// Move to relative position of nearby boids
-	//*
 	for (i = 0; i < numPrey; i++)
 	{
 		var xTot = 0.0;
@@ -41,21 +40,13 @@ function updatePrey()
 			if (dist > interactDistPos)
 				continue;
 
-			xDir = (prey[i].x - prey[j].x < 0) ? -1 : 1;
-			yDir = (prey[i].y - prey[j].y < 0) ? -1 : 1;
-			//xTot += xDir * prey[j].x;
-			//yTot += yDir * prey[j].y;
 			xTot += prey[j].x;
 			yTot += prey[j].y;
 		}
 
-		//prey[i].dx += ((xTot / (numPrey - 1)) / flockTogetherFactor);
-		//prey[i].dy += ((yTot / (numPrey - 1)) / flockTogetherFactor);
 		prey[i].dx += ((xTot / (numPrey - 1)) / flockTogetherFactor);
 		prey[i].dy += ((yTot / (numPrey - 1)) / flockTogetherFactor);
 	}
-	//*/
-
 
 	// Avoid other boids/obstacles
 	for (i = 0; i < numPrey; i++)
@@ -69,23 +60,17 @@ function updatePrey()
 
 			var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
 						Math.pow(prey[i].y - prey[j].y, 2));
-			//if (Math.abs(prey[i].x - prey[j].x) < interactDist &&
-			//		Math.abs(prey[i].y - prey[j].y) < interactDist)
 			if (dist < interactDistAvoid)
 			{
-				//var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
-						//Math.pow(prey[i].y - prey[j].y, 2));
 				xAdj += (prey[i].x - prey[j].x) / (dist * numPrey);
 				yAdj += (prey[i].y - prey[j].y) / (dist * numPrey);
 			}
 		}
-		prey[i].dx += xAdj;//* .6;
-		prey[i].dy += yAdj;//* .6;
+		prey[i].dx += xAdj;
+		prey[i].dy += yAdj;
 	}
-	//*/
 
 	// Match nearby boid velocity
-	//*
 	for (i = 0; i < numPrey; i++)
 	{
 		var dxTot = 0.0; 
@@ -108,9 +93,6 @@ function updatePrey()
 		prey[i].dx += (dxTot / (numPrey - 1)) / relativeVelFactor;
 		prey[i].dy += (dyTot / (numPrey - 1)) / relativeVelFactor;
 	}
-	//*/
-
-
 
 	// Wrap around to other side of screen
 	for (i = 0; i < numPrey; i++)
@@ -129,6 +111,7 @@ function updatePrey()
 	// Update Prey positions
 	for (i = 0; i < numPrey; i++)
 	{
+		// Keeps the max speed of the boids down
 		if (prey[i].dx > maxSpeed || prey[i].dx < -maxSpeed)
 		{
 			var sign = 0;
@@ -142,8 +125,6 @@ function updatePrey()
 			sign = (prey[i].dy == 0) ? 0 : ((prey[i].dy < 0) ? -1 : 1);
 			prey[i].dy = sign * maxSpeed;
 		}
-		//prey[i].x += (prey[i].dx > maxSpeed) ? maxSpeed : prey[i].dx;
-		//prey[i].y += (prey[i].dy > maxSpeed) ? maxSpeed : prey[i].dy;
 		prey[i].x += prey[i].dx;
 		prey[i].y += prey[i].dy;
 	} 
