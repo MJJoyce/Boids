@@ -9,7 +9,9 @@ numPrey = 20;
 numPred = 0;
 prey = new Array();
 pred = new Array();
-interactDist = 30;
+interactDistPos = 30;
+interactDistAvoid = 30;
+interactDistVel = 30;
 flockTogetherFactor = 1000;
 relativeVelFactor = 8;
 spacingScalar = .3;
@@ -33,7 +35,7 @@ function updatePrey()
 			var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
 						Math.pow(prey[i].y - prey[j].y, 2));
 
-			if (dist > interactDist)
+			if (dist > interactDistPos)
 				continue;
 
 			xTot += prey[j].x;
@@ -59,7 +61,7 @@ function updatePrey()
 						Math.pow(prey[i].y - prey[j].y, 2));
 			//if (Math.abs(prey[i].x - prey[j].x) < interactDist &&
 			//		Math.abs(prey[i].y - prey[j].y) < interactDist)
-			if (dist < interactDist)
+			if (dist < interactDistAvoid)
 			{
 				//var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
 						//Math.pow(prey[i].y - prey[j].y, 2));
@@ -86,7 +88,7 @@ function updatePrey()
 			var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
 						Math.pow(prey[i].y - prey[j].y, 2));
 
-			if (dist > interactDist)
+			if (dist > interactDistVel)
 				continue;
 
 			dxTot += prey[j].dx;
