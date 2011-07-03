@@ -9,10 +9,10 @@ numPrey = 20;
 numPred = 0;
 prey = new Array();
 pred = new Array();
-interactDistPos = 30;
-interactDistAvoid = 30;
-interactDistVel = 30;
-flockTogetherFactor = 1000;
+interactDistPos = 40;
+interactDistAvoid = 10;
+interactDistVel = 50;
+flockTogetherFactor = 10000;
 relativeVelFactor = 8;
 spacingScalar = .3;
 maxSpeed = .9;
@@ -23,10 +23,13 @@ function updatePrey()
 	// Change later! Currently concern is getting this working.
 
 	// Move to relative position of nearby boids
+	//*
 	for (i = 0; i < numPrey; i++)
 	{
 		var xTot = 0.0;
 		var yTot = 0.0;
+		var xDir = 0;
+		var yDir = 0;
 		for (j = 0; j < numPrey; j++)
 		{
 			if (i == j)
@@ -38,13 +41,20 @@ function updatePrey()
 			if (dist > interactDistPos)
 				continue;
 
+			xDir = (prey[i].x - prey[j].x < 0) ? -1 : 1;
+			yDir = (prey[i].y - prey[j].y < 0) ? -1 : 1;
+			//xTot += xDir * prey[j].x;
+			//yTot += yDir * prey[j].y;
 			xTot += prey[j].x;
 			yTot += prey[j].y;
 		}
 
+		//prey[i].dx += ((xTot / (numPrey - 1)) / flockTogetherFactor);
+		//prey[i].dy += ((yTot / (numPrey - 1)) / flockTogetherFactor);
 		prey[i].dx += ((xTot / (numPrey - 1)) / flockTogetherFactor);
 		prey[i].dy += ((yTot / (numPrey - 1)) / flockTogetherFactor);
 	}
+	//*/
 
 
 	// Avoid other boids/obstacles
@@ -69,13 +79,13 @@ function updatePrey()
 				yAdj += (prey[i].y - prey[j].y) / (dist * numPrey);
 			}
 		}
-		prey[i].dx += xAdj * .3;
-		prey[i].dy += yAdj * .3;
+		prey[i].dx += xAdj;//* .6;
+		prey[i].dy += yAdj;//* .6;
 	}
 	//*/
 
 	// Match nearby boid velocity
-	/*
+	//*
 	for (i = 0; i < numPrey; i++)
 	{
 		var dxTot = 0.0; 
