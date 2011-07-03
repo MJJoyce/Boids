@@ -5,13 +5,13 @@ Predator/Prey Swarm
 </title>
 <script type="text/javascript">
 canvasWidth = canvasHeight = 500;
-numPrey = 10;
+numPrey = 20;
 numPred = 0;
 prey = new Array();
 pred = new Array();
 interactDist = 30;
-flockTogetherScalar = 5;
-relativeVelScalar = .7;
+flockTogetherFactor = 1000;
+relativeVelFactor = 8;
 spacingScalar = .3;
 maxSpeed = .9;
 
@@ -20,6 +20,32 @@ function updatePrey()
 	// Currently this is naively implemented (or at least it will be)
 	// Change later! Currently concern is getting this working.
 
+	// Move to relative position of nearby boids
+	for (i = 0; i < numPrey; i++)
+	{
+		var xTot = 0.0;
+		var yTot = 0.0;
+		for (j = 0; j < numPrey; j++)
+		{
+			if (i == j)
+				continue;
+
+			var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
+						Math.pow(prey[i].y - prey[j].y, 2));
+
+			if (dist > interactDist)
+				continue;
+
+			xTot += prey[j].x;
+			yTot += prey[j].y;
+		}
+
+		prey[i].dx += ((xTot / (numPrey - 1)) / flockTogetherFactor);
+		prey[i].dy += ((yTot / (numPrey - 1)) / flockTogetherFactor);
+	}
+
+
+	// Avoid other boids/obstacles
 	for (i = 0; i < numPrey; i++)
 	{
 		var xAdj = 0.0;
@@ -43,6 +69,32 @@ function updatePrey()
 		}
 		prey[i].dx += xAdj * .3;
 		prey[i].dy += yAdj * .3;
+	}
+	//*/
+
+	// Match nearby boid velocity
+	/*
+	for (i = 0; i < numPrey; i++)
+	{
+		var dxTot = 0.0; 
+		var dyTot = 0.0;
+		for (j = 0; j < numPrey; j++)
+		{
+			if (i == j)
+				continue;
+
+			var dist = Math.sqrt(Math.pow(prey[i].x - prey[j].x, 2) +
+						Math.pow(prey[i].y - prey[j].y, 2));
+
+			if (dist > interactDist)
+				continue;
+
+			dxTot += prey[j].dx;
+			dyTot += prey[j].dy;
+		}
+
+		prey[i].dx += (dxTot / (numPrey - 1)) / relativeVelFactor;
+		prey[i].dy += (dyTot / (numPrey - 1)) / relativeVelFactor;
 	}
 	//*/
 
